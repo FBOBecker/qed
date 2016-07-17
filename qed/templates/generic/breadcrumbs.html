@@ -1,0 +1,12 @@
+{% macro parent_list(entity, first_title, first_endpoint) %}
+    <ol class="breadcrumb">
+        <li><a href="{{ url_for(first_endpoint) }}">{{ first_title }}</a></li>
+        {% for parent in entity|parents|reverse  %}
+            {% if entity == parent %}
+                <li class="active">{{ parent.title }}</li>
+            {% else %}
+                <li><a href="{{ parent.link }}">{{ parent.title }}</a></li>
+            {% endif %}
+        {% endfor %}
+    </ol>
+{% endmacro %}

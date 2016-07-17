@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% from "generic/breadcrumbs.html" import parent_list %}
+{% from "generic/form.html" import render_form, render_field %}
+
+{% block content %}
+    {{ parent_list(entity, "Forum", "forum.index") }}
+
+    {% if threads %}
+        <h1>Threads</h1>
+        <div class="list-group">
+        {% for thread in threads %}
+            {% set post = thread.posts.order_by(Post._timestamp).first() %}
+            <a class="list-group-item" href="{{ thread.link }}">
+                {{ thread.title }}
+                <span class="pull-right">{{ thread.posts.count() }} posts, last {{ post.when }} by {{ post.author.user.nick_name }} </span>
+            </a>
+        {% endfor %}
+        </div>
+    {% else %}
+        <p>There are no threads yet!</p>
+    {% endif %}
+
+    <h1>New Thread</h1>
+    {% call render_form(form) %}
+        {{ render_field(form.title) }}
+        {{ render_field(form.text) }}
+        <div class="form-group">
+            <label class="control-label" for="preview">Preview</label>
+            <p data-url="{{ url_for("api.markdown") }}" disabled="disabled" class="form-control" id="preview"></p>
+        </div>
+    {% endcall %}
+{% endblock %}
+
+{% block script %}
+    <script>
+    var text = $("#text");
+    var preview = $("#preview");
+
+    text.keyup(function () {
+        $.ajax(preview.attr("data-url"), {
+            method: "POST",
+            data: {text: text.val()}
+        }).fail(function (result) {
+            console.error(result.status, result)
+        }).done(function(result) {
+            preview.html(result.html)
+        })
+    })
+    </script>
+{% endblock %}
