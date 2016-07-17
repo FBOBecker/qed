@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% from "generic/breadcrumbs.html" import parent_list %}
+
+{% block content %}
+    {% if entity %}
+        {{ parent_list(entity, "Forum", "forum.index") }}
+        <h1>Sub Categories</h1>
+    {% else %}
+        <h1>Categories</h1>
+    {% endif %}
+    <div class="list-group">
+    {% for cat in categories %}
+        <a class="list-group-item" href="{{ cat.link }}">
+            {{ cat.title }}
+            {% if cat.children %}
+                <span class="pull-right">sub categories {{ cat.children.count() }}</span>
+            {% else %}
+                <span class="pull-right">threads {{ cat.threads.count() }}</span>
+            {% endif %}
+        </a>
+    {% endfor %}
+    </div>
+
+{% endblock %}

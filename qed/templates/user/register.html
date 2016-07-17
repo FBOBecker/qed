@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% from "generic/form.html" import render_form, render_field %}
+
+{% block content %}
+    {% call render_form(form) %}
+        {{ render_field(form.nick_name) }}
+        {{ render_field(form.password) }}
+        {{ render_field(form.retype) }}
+        {{ render_field(form.main_name) }}
+        {{ render_field(form.main_server_str) }}
+        {{ render_field(form.main_spec_str) }}
+    {% endcall %}
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Characters</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Class</th>
+                <th>Spec</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for char in current_user.characters.order_by(Character.name) %}
+                <tr>
+                    <td>{{ char.name }}</td>
+                    <td>{{ char.cls.name }}</td>
+                    <td>{{ char.spec.name }}</td>
+                    <td>
+                    {% if char.id == current_user.main.id %}
+                        <button class="btn btn-default disabled"><span class="glyphicon glyphicon-star">
+                    {% else %}
+                        <button data-method="POST" data-url="{{ url_for("api.character", eid=char.id, action="set-main") }}" class="btn btn-default"><span class="glyphicon glyphicon-star-empty">
+                    {% endif %}
+                    </span></button></td>
+                    <td>
+                        {% if char.id == current_user.main.id %}
+                            <button class="btn btn-default disabled"><span class="glyphicon glyphicon-trash"></span></button>
+                        {% else %}
+                            <button data-method="DELETE" data-url="{{ url_for("api.character", eid=char.id) }}" class="btn btn-default"><span class="glyphicon glyphicon-trash"></span></button>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block script %}
+    <script>
+        var btn = $("button");
+        btn.click(function() {
+            var url = $(this).attr("data-url");
+            console.log("URL", url);
+            $.ajax(url, {
+                method: $(this).attr("data-method"),
+                data: {}
+            }).done(function () {
+                location.reload()
+            }).fail(function(result) {
+                console.log("fail", result)
+            })
+        })
+    </script>
+{% endblock %}
